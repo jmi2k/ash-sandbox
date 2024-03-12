@@ -1,0 +1,36 @@
+[package]
+name = "ash-sandbox"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = ["vulkan"]
+vulkan = ["dep:ash"]
+
+# Keep dependencies to a minimum!
+
+[dependencies.ash]
+git = "https://github.com/ash-rs/ash"
+default-features = false
+features = ["debug", "linked"]
+optional = true
+
+[target.'cfg(unix)'.dependencies.x11]
+version = "2.21"
+features = ["xlib"]
+
+[target.'cfg(windows)'.dependencies.windows]
+version = "0.54"
+features = [
+    "Win32_Graphics_Gdi",
+    "Win32_System_LibraryLoader",
+    "Win32_UI_WindowsAndMessaging",
+]
+
+# Crank optimizations to the maximum possible.
+
+[profile.release]
+codegen-units = 1
+lto = "off"
+panic = "abort"
+strip = true

@@ -12,9 +12,9 @@ use windows::{
         System::LibraryLoader::GetModuleHandleA,
         UI::WindowsAndMessaging::{
             CreateWindowExA, DefWindowProcA, DestroyWindow, DispatchMessageA, GetClientRect,
-            GetWindowLongPtrA, LoadCursorW, PeekMessageA, PostQuitMessage, RegisterClassA,
-            SetWindowLongPtrA, CS_HREDRAW, CS_VREDRAW, CW_USEDEFAULT, GWLP_USERDATA, IDC_ARROW,
-            MSG, PM_REMOVE, WINDOW_EX_STYLE, WM_CLOSE, WM_DESTROY, WM_QUIT, WNDCLASSA,
+            GetWindowLongPtrA, LoadCursorA, PeekMessageA, PostQuitMessage, RegisterClassA,
+            SetWindowLongPtrA, CS_HREDRAW, CS_OWNDC, CS_VREDRAW, CW_USEDEFAULT, GWLP_USERDATA,
+            IDC_ARROW, MSG, PM_REMOVE, WINDOW_EX_STYLE, WM_CLOSE, WM_DESTROY, WM_QUIT, WNDCLASSA,
             WS_OVERLAPPEDWINDOW, WS_VISIBLE,
         },
     },
@@ -42,10 +42,10 @@ impl Window {
         let instance = unsafe { GetModuleHandleA(None) }?.into();
 
         let class = WNDCLASSA {
-            hCursor: unsafe { LoadCursorW(None, IDC_ARROW) }?,
+            hCursor: unsafe { LoadCursorA(None, PCSTR(IDC_ARROW.0 as _)) }?,
             hInstance: instance,
             lpszClassName: s!("window"),
-            style: CS_HREDRAW | CS_VREDRAW,
+            style: CS_HREDRAW | CS_VREDRAW | CS_OWNDC,
             lpfnWndProc: Some(handle_event),
             ..Default::default()
         };

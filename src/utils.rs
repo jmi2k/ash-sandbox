@@ -9,6 +9,9 @@ macro_rules! wrap {
     }
 }
 
+pub(crate) use wrap;
+
+#[cfg(feature = "vulkan")]
 macro_rules! include_spv {
     ($device:expr, $($tokens:tt)*) => {{
         let blob = include_bytes!($($tokens)*);
@@ -19,4 +22,5 @@ macro_rules! include_spv {
     }}
 }
 
-pub(crate) use {include_spv, wrap};
+#[cfg(feature = "vulkan")]
+pub(crate) use include_spv;

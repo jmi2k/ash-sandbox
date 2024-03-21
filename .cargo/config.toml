@@ -1,0 +1,65 @@
+# Minimize release size by ditching fancy panicking.
+
+# [build]
+# target = ["i586-rust9x-windows-msvc"]
+
+# [unstable]
+# build-std = ["std", "panic_abort"]
+# build-std-features = ["panic_immediate_abort"]
+
+# Windows 9x tweaks.
+
+[target.'cfg(target_vendor = "rust9x")']
+rustflags = [
+  # Link runtime statically to avoid having to distribute DLLs.
+  "-Ctarget-feature=+crt-static",
+
+  # Use libraries from Visual Studio .NET 2003 instead of modern ones.
+  '-Clink-args=/LIBPATH:C:\Users\jmi2k\Documents\Vc7\lib',
+  '-Clink-args=/LIBPATH:C:\Users\jmi2k\Documents\Vc7\PlatformSDK\Lib',
+
+  # libunicows.lib lives here.
+  "-Clink-args=/LIBPATH:lib",
+
+  # Remove default libraries to let libunicows overrides do its job.
+  """-Clink-args=
+    /NOD:kernel32.lib
+    /NOD:advapi32.lib
+    /NOD:user32.lib
+    /NOD:gdi32.lib
+    /NOD:shell32.lib
+    /NOD:comdlg32.lib
+    /NOD:version.lib
+    /NOD:mpr.lib
+    /NOD:rasapi32.lib
+    /NOD:winmm.lib
+    /NOD:winspool.lib
+    /NOD:vfw32.lib
+    /NOD:secur32.lib
+    /NOD:oleacc.lib
+    /NOD:oledlg.lib
+    /NOD:sensapi.lib""",
+
+  # Link unicows — /SAFESEH:NO is required when using open source replacements.
+  "-Clink-arg=/SAFESEH:NO",
+  "-Clink-arg=libunicows.lib",
+
+  # Link default libraries again.
+  """-Clink-args=
+    kernel32.lib
+    advapi32.lib
+    user32.lib
+    gdi32.lib
+    shell32.lib
+    comdlg32.lib
+    version.lib
+    mpr.lib
+    rasapi32.lib
+    winmm.lib
+    winspool.lib
+    vfw32.lib
+    secur32.lib
+    oleacc.lib
+    oledlg.lib
+    sensapi.lib""",
+]
